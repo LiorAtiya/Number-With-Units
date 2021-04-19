@@ -16,31 +16,51 @@ namespace ariel {
             NumberWithUnits(){
                 this->n = 0;
                 this->units = "";
-            }
-
-            int getNumber(){ return this->n; }
-            string getUnits(){ return this->units; }
-            void setNumber(double num){ this->n = num; }
-            void setUnits(string units){ this->units = units; }   
+            } 
 
             static void read_units(ifstream& units_file);  
+
+
+            friend NumberWithUnits& operator+ (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend NumberWithUnits& operator+= (NumberWithUnits& num1, NumberWithUnits num2);
+            friend NumberWithUnits& operator+ (NumberWithUnits& num);
+            
+            friend NumberWithUnits& operator- (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend NumberWithUnits& operator-= (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend NumberWithUnits& operator- (NumberWithUnits& num);
+
+            friend bool operator> (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend bool operator>= (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend bool operator< (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend bool operator<= (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend bool operator== (NumberWithUnits& num1, NumberWithUnits num2);
+            friend bool operator!= (NumberWithUnits& num1, NumberWithUnits& num2);
+
+            NumberWithUnits& operator++ (){
+                ++n;
+                return *this;
+            }
+
+            NumberWithUnits operator-- (){
+                --n;
+                return *this;
+            }
+
+            NumberWithUnits operator++ (int){
+                n++;
+                return *this;
+            }
+            NumberWithUnits operator-- (int){
+                n--;
+                return *this;
+            }
+
+
+            friend NumberWithUnits& operator*(double num, NumberWithUnits& n);
+            friend NumberWithUnits& operator*(NumberWithUnits& n, double num);
+
+            friend ostream& operator<< (ostream& os, NumberWithUnits& num);
+            friend istream& operator>> (istream& input, NumberWithUnits& c); 
     };
 
 }
-
-string operator+ (ariel::NumberWithUnits& num1, ariel::NumberWithUnits& num2);
-// string operator+= (int n, string s);
-// string operator+ (int n, string s);
-// string operator- (int n, string s);
-string operator- (ariel::NumberWithUnits& num);
-ariel::NumberWithUnits& operator*(double num, ariel::NumberWithUnits& n);
-// string operator-= (int n, string s);
-// string operator< (int n, string s);
-// string operator<= (int n, string s);
-// string operator>= (int n, string s);
-// string operator== (int n, string s);
-// string operator!= (int n, string s);
-// string operator-- (NumberWithUnits n);
-// ariel::NumberWithUnits operator*(double num1 , ariel::NumberWithUnits& num2);
-
-ostream& operator<< (ostream& os, ariel::NumberWithUnits& num);
