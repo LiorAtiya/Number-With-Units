@@ -30,10 +30,10 @@ namespace ariel {
             friend NumberWithUnits& operator- (NumberWithUnits& num);
 
             friend bool operator> (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend bool operator>= (NumberWithUnits& num1, NumberWithUnits& num2);
+            friend bool operator>= (const NumberWithUnits& num1, const NumberWithUnits& num2);
             friend bool operator< (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend bool operator<= (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend bool operator== (NumberWithUnits& num1, NumberWithUnits num2);
+            friend bool operator<= (const NumberWithUnits& num1, const NumberWithUnits& num2);
+            friend bool operator== (const NumberWithUnits& num1, const NumberWithUnits& num2);
             friend bool operator!= (NumberWithUnits& num1, NumberWithUnits& num2);
 
             NumberWithUnits& operator++ (){
