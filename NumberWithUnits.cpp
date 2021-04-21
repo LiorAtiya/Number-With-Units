@@ -58,14 +58,14 @@ namespace ariel{
             }
         }      
 
-        //Print the hashmap
-        for (auto const &pair: unit) {
-            cout << pair.first << ": ";
-            for(auto const &pair2: unit[pair.first]){
-                std::cout << "{" << pair2.first << ":" << pair2.second << "},";
-            }
-            std::cout << '\n';
-        }
+        // //Print the hashmap
+        // for (auto const &pair: unit) {
+        //     cout << pair.first << ": ";
+        //     for(auto const &pair2: unit[pair.first]){
+        //         std::cout << "{" << pair2.first << ":" << pair2.second << "},";
+        //     }
+        //     std::cout << '\n';
+        // }
     }
 
     //Converter from one unit to another unit
