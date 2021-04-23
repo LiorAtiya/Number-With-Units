@@ -2,7 +2,7 @@
 #include<iostream>
 #include <fstream>
 #include <sstream>
-#include <array>
+// #include <array>
 #include <map>
 using namespace std;
 using namespace ariel;
@@ -11,14 +11,18 @@ map<string, map<string,double>> unit;
 const double eps = 0.0001;
 
 namespace ariel{
-
-    const array<string,11> allUnits {"km","m", "cm","kg", "g", "ton","hour","min", "sec","USD", "ILS"};
     //Checks the valid of the unit
-    bool checkValidUnit(string const& unit){
-        for(uint i=0 ; i < sizeof(allUnits)/sizeof(allUnits[0]) ; i++){
-            if(unit == allUnits.at(i)) {return true; }
+    bool checkValidUnit(string const& u){
+        return (unit.count(u) != 0U);
+    }
+    //Constructor
+    NumberWithUnits::NumberWithUnits(const double num,const string& units){
+        if((unit.count(units) != 0U)){
+            this->n = num;
+            this->units = units;
+        }else{
+            throw invalid_argument("Invalid input");
         }
-        return false;
     }
 
     //Reads the units from the text file
@@ -39,11 +43,6 @@ namespace ariel{
             iss1 >> fromUnit;
             iss2 >> toNum >> toUnit;
 
-            //Check if one of the units is not valid
-            if(!checkValidUnit(fromUnit) || !checkValidUnit(toUnit)){
-                throw invalid_argument("Invalid input");
-            }
-
             //Puts the all conversion units in the map
             unit[fromUnit][toUnit] = toNum;
             unit[toUnit][fromUnit] = (1/toNum);
@@ -58,7 +57,7 @@ namespace ariel{
             }
         }      
 
-        // //Print the hashmap
+        //Print the hashmap
         // for (auto const &pair: unit) {
         //     cout << pair.first << ": ";
         //     for(auto const &pair2: unit[pair.first]){
@@ -82,88 +81,130 @@ namespace ariel{
     }
 
     //Arithmetic Operators
-    NumberWithUnits operator+ (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units ,num1.units, num2.n);
-        return NumberWithUnits(num1.n + convertedNum2, num1.units);
+    NumberWithUnits NumberWithUnits::operator+ (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units ,this->units, other.n);
+        return NumberWithUnits(this->n + convertedNum2, this->units);
     }
 
-    NumberWithUnits& operator+= (NumberWithUnits& num1, NumberWithUnits const& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        num1.n = num1.n + convertedNum2;
-        return num1;
+    NumberWithUnits& NumberWithUnits::operator+= (NumberWithUnits const& other){
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        (*this).n = (*this).n + convertedNum2;
+        return (*this);
     }
 
-    NumberWithUnits operator+ (NumberWithUnits& num){
-        return num;
+    NumberWithUnits NumberWithUnits::operator+ (){ return (*this); }
+
+    NumberWithUnits NumberWithUnits::operator- (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return NumberWithUnits(this->n - convertedNum2, this->units);
     }
 
-    NumberWithUnits operator- (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return NumberWithUnits(num1.n - convertedNum2, num1.units);
+    NumberWithUnits& NumberWithUnits::operator-= (NumberWithUnits const& other){
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        (*this).n = (*this).n - convertedNum2;
+        return (*this);
     }
 
-    NumberWithUnits& operator-= (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        num1.n = num1.n - convertedNum2;
-        return num1;
+    NumberWithUnits NumberWithUnits::operator- () const{
+        return NumberWithUnits(-this->n, this->units);
     }
 
-    NumberWithUnits operator- (NumberWithUnits& num){
-        return NumberWithUnits(-num.n, num.units);
+    NumberWithUnits& NumberWithUnits::operator++ (){
+        this->n++;
+        return *this;
+    }
+    
+
+    NumberWithUnits& NumberWithUnits::operator-- (){
+        this->n--;
+        return *this;
     }
 
-    NumberWithUnits operator*(double num, NumberWithUnits& n){
+    NumberWithUnits operator*(const double num, NumberWithUnits const& n){
         return NumberWithUnits(num * n.n, n.units);
     }
 
-    NumberWithUnits operator*(NumberWithUnits& n, double num){
-        return NumberWithUnits(num * n.n,n.units);
+    NumberWithUnits NumberWithUnits::operator*(double num){
+        return NumberWithUnits(num * this->n,this->units);
     }
 
     //Boolean Operators
 
-    bool operator> (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (num1.n > convertedNum2);
+    bool NumberWithUnits::operator> (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (this->n > convertedNum2);
     }
 
-    bool operator>= (const NumberWithUnits& num1, const NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (num1.n >= convertedNum2);
+    bool NumberWithUnits::operator>= (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (this->n >= convertedNum2);
     }
 
-    bool operator< (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (num1.n < convertedNum2);
+    bool NumberWithUnits::operator< (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (this->n < convertedNum2);
     }
 
-    bool operator<= (const NumberWithUnits& num1,const NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (num1.n <= convertedNum2);
+    bool NumberWithUnits::operator<= (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (this->n <= convertedNum2);
     }
 
-    bool operator== (const NumberWithUnits& num1, const NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (abs(num1.n - convertedNum2) < eps);
+    bool NumberWithUnits::operator== (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (abs(this->n - convertedNum2) < eps);
     }
 
-    bool operator!= (NumberWithUnits& num1, NumberWithUnits& num2){
-        double convertedNum2 = convert(num2.units, num1.units, num2.n);
-        return (num1.n != convertedNum2);
+    bool NumberWithUnits::operator!= (NumberWithUnits const& other) const{
+        double convertedNum2 = convert(other.units, this->units, other.n);
+        return (this->n != convertedNum2);
     }
 
     //I/O Operators
         ostream& operator<< (ostream& os,const NumberWithUnits& num){
+        if(!checkValidUnit(num.units)) {
+            throw invalid_argument("Invalid input");
+        }
         os << num.n << '[' << num.units << ']';
         return os;
     }
 
     istream& operator>> (istream& input, NumberWithUnits& num){
-        string bracket;
-        input >> num.n >> bracket >> num.units;
-        if(checkValidUnit(num.units)) {return input; }
+        double number = 0;
+        string type;
+        string end;
+        while(input >> number){
+            num.n = number;
+            while(input >> type){
+                if(type == "[]"){
+                    throw invalid_argument("Invalid input");
+                }
+                //Like this: [unit
+                if(type.find('[') < type.length() && type.find(']') > type.length()){
+                    type = type.substr(1,type.length()-1);
+                    if(type.length() > 0){
+                        input >> end;
+                    }
+                //Like this: unit]
+                }else if(type.find('[') > type.length() && type.find(']') < type.length()){
+                    type = type.substr(0,type.length()-2);
+                //Like this: [unit]
+                }else if(type.find('[') < type.length() && type.find(']') < type.length()){
+                    type = type.substr(1,type.length()-2);
+                }else if(type.find('[') > type.length() && type.find(']') > type.length()){
+                    input >> end;
+                }
+                if(checkValidUnit(type)){
+                    num.units = type;
+                    return input;
+                }
 
-        throw invalid_argument("Invalid input");
+                if(type.length() != 0){
+                    throw invalid_argument("Invalid input");
+                }
+            }
+        }
+        return input;
     }
 
 }

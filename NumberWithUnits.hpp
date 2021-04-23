@@ -1,5 +1,6 @@
 #include<iostream>
 #include <fstream>
+#include <map>
 using namespace std;
 namespace ariel {
 
@@ -9,56 +10,49 @@ namespace ariel {
             string units;
         public:
             //Constructor
-            NumberWithUnits(double num,string units){
-                this->n = num;
-                this->units = units;
-            }
-            //Default constructor
-            NumberWithUnits(){
-                this->n = 0;
-                this->units = "";
-            } 
+            NumberWithUnits(const double num,const string& units);
+            // //Default constructor
+            // NumberWithUnits(){
+            //     this->n = 0;
+            //     this->units = "";
+            // } 
 
             static void read_units(ifstream& units_file);  
             
             //Arithmetic Operators
-            friend NumberWithUnits operator+ (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend NumberWithUnits& operator+= (NumberWithUnits& num1, NumberWithUnits const& num2);
-            friend NumberWithUnits operator+ (NumberWithUnits& num);
-            
-            friend NumberWithUnits operator- (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend NumberWithUnits& operator-= (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend NumberWithUnits operator- (NumberWithUnits& num);
+            NumberWithUnits operator+ (NumberWithUnits const& other) const;
+            NumberWithUnits& operator+= (NumberWithUnits const& other);
+            NumberWithUnits operator+ ();
+                    
+            NumberWithUnits operator- (NumberWithUnits const& other) const;
+            NumberWithUnits& operator-= (NumberWithUnits const& other);
+            NumberWithUnits operator- () const;
+            //prefix
+            NumberWithUnits& operator++ ();
+            NumberWithUnits& operator-- ();
 
-            NumberWithUnits& operator++ (){
-                ++n;
-                return *this;
+            //postfix
+            NumberWithUnits operator++ (int dummy_flag_for_postfix){
+                NumberWithUnits copy = *this;
+                this->n++;
+                return copy;
+            }
+            NumberWithUnits operator-- (int dummy_flag_for_postfix){
+                NumberWithUnits copy = *this;
+                this->n--;
+                return copy;
             }
 
-            NumberWithUnits operator-- (){
-                --n;
-                return *this;
-            }
-
-            NumberWithUnits operator++ (int){
-                n++;
-                return *this;
-            }
-            NumberWithUnits operator-- (int){
-                n--;
-                return *this;
-            }
-
-            friend NumberWithUnits operator*(double num, NumberWithUnits& n);
-            friend NumberWithUnits operator*(NumberWithUnits& n, double num);
+            NumberWithUnits operator*(double num);
+            friend NumberWithUnits operator*(const double num, NumberWithUnits const& n);
 
             //Boolean Operators
-            friend bool operator> (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend bool operator>= (const NumberWithUnits& num1, const NumberWithUnits& num2);
-            friend bool operator< (NumberWithUnits& num1, NumberWithUnits& num2);
-            friend bool operator<= (const NumberWithUnits& num1, const NumberWithUnits& num2);
-            friend bool operator== (const NumberWithUnits& num1, const NumberWithUnits& num2);
-            friend bool operator!= (NumberWithUnits& num1, NumberWithUnits& num2);
+            bool operator> (NumberWithUnits const& other) const;
+            bool operator>= (NumberWithUnits const& other) const;
+            bool operator< (NumberWithUnits const& other) const;
+            bool operator<= (NumberWithUnits const& other) const;
+            bool operator== (NumberWithUnits const& other) const;
+            bool operator!= (NumberWithUnits const& other) const;
 
             // I/O Operators
             friend ostream& operator<< (ostream& os,const NumberWithUnits& num);
